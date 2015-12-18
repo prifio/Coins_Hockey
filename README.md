@@ -10,13 +10,13 @@ Coins Hockey или CH это
 
 ## Скачать последнюю версию
 Перейдите на список релизов (третья кнопка над списком файлов).
-![alt tag](./readme_picture/releaze_bottom.png)
+![alt tag](./readme_picture/releaze_bottom.jpg)
 В последнем релизе(last relize) найдите ссылку на игру(это не source code!!) 
-![alt tag](./readme_picture/download.png)
+![alt tag](./readme_picture/download.jpg)
 
 ## Разархивировать
 Нажмите правую кнопку мыши на архиве -> извлечь. Укажите папку, куда хотите поместить игру. Главно не забудьте!!
-![alt tag](./readme_picture/unzip.png)
+![alt tag](./readme_picture/unzip.jpg)
 
 ##Запустить
 Всё просто. Ищите CHbin.exe. Запускайте. Вы в игре.
