@@ -10,7 +10,7 @@ Coins Hockey или CH это
 
 ## Скачать последнюю версию
 Перейдите на список релизов (третья кнопка над списком файлов).
-![alt tag](./readme_picture/releaze_bottom.jpg)
+![alt tag](./readme_picture/release_bottom.jpg)
 В последнем релизе(last relize) найдите ссылку на игру(это не source code!!) 
 ![alt tag](./readme_picture/download.jpg)
 
