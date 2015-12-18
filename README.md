@@ -6,6 +6,9 @@ Coins Hockey или CH это
 + Система прокачки
 + И просто способ забавно провести время
 
+
+![alt tag](./readme_picture/screen.png)
+
 # Как играть?
 
 ## Скачать последнюю версию
@@ -32,5 +35,3 @@ Coins Hockey или CH это
 Другие игры и подробнее про CH [здесь](http://vk.com/my_programs)
 
 Приятной игры.
-
-![alt tag](./readme_picture/screen.png)
