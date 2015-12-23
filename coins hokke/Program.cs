@@ -913,7 +913,7 @@ namespace coins_hockey
             coin = new int[Program.countcoin];
             nap = 1;
             vrat = 1;
-            mon = 10000000;
+            mon = 0;
         }
         public override string ToString()
         {
