@@ -43,7 +43,7 @@ namespace coins_hockey
                 Z.MainForm.drawoll();
                 Application.DoEvents();
                 if (MainGame.sit == 0) 
-                    MainGame.prd(ticktim.ElapsedMilliseconds);
+                    MainGame.up_date(ticktim.ElapsedMilliseconds);
                 if (Z.sit == 1 || Z.sit == 2)
                     MainGame.menuprd();
                 ticktim.Restart();
@@ -246,7 +246,7 @@ namespace coins_hockey
             return an;
         }
 
-        public void sdvig(double time, coins[] coin)
+        public void move(double time, coins[] coin)
         {
             double spd = Math.Sqrt(vec.x * vec.x + vec.y * vec.y);
            
@@ -301,9 +301,9 @@ namespace coins_hockey
             on_board();
         }
 
-        public void prd(double time, coins[] coins)
+        public void global_move(double time, coins[] coins)
         {
-            sdvig(time, coins);
+            move(time, coins);
             for (int i = nu + 1; i < coins.Length; i++)
             {
                 if (otb == i)
@@ -426,14 +426,14 @@ namespace coins_hockey
             if (f) ch2 = 0;
             immunlast = 5;
         }
-        public void prd(long tick)
+        public void up_date(long tick)
         {
             double hl = tick;
             while (hl > 0)
             {
                 for (int i = 0; i < coinarr.Length; i++)
                 {
-                    coinarr[i].prd(Math.Min(0.1, hl), coinarr);
+                    coinarr[i].global_move(Math.Min(0.1, hl), coinarr);
                 }
                 hl -= 0.1;
             }

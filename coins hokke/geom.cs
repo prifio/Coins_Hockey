@@ -7,12 +7,32 @@ namespace coins_hockey
 {
     class geom
     {
-        
+        public static Point RandomAngel(double angl1, double angl2)
+        {
+            while (angl2 < angl1)
+                angl2 += Math.PI * 2;
+            Random rand = new Random();
+            int left = (int)(angl1 * 1000);
+            int right = (int)(angl2 * 1000);
+            int res = rand.Next(left, right);
+            double angl = (double)res / 1000;
+            return new Point(Math.Cos(angl), Math.Sin(angl));
+        }
     }
 
     class Point
     {
-        public double x, y;
+        public double x { get; set; }
+        public double y { get; set; }
+        public Point()
+        {
+            x = y = 0;
+        }
+        public Point(double setx, double sety)
+        {
+            x = setx;
+            y = sety;
+        }
     }
 
     class Line
