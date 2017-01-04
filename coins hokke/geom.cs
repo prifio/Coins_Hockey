@@ -18,6 +18,10 @@ namespace coins_hockey
             double angl = (double)res / 1000;
             return new Point(Math.Cos(angl), Math.Sin(angl));
         }
+        public static Point Rotate(Point p1, Point p2)
+        {
+            return new Point(p1.x * p2.x - p1.y * p2.y, p1.x * p2.y + p1.y + p2.x);
+        }
     }
 
     class Point

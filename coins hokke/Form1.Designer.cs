@@ -65,14 +65,14 @@
             var bmp = new System.Drawing.Bitmap(this.Width, this.Height);
             var g = System.Drawing.Graphics.FromImage(bmp);
             if (Z.sit == -2)
-                Program.getgrp4(g);
+                Program.graphic_nointernet(g);
             else  if (Z.sit == -1)
-                Program.getgrp0(g);
+                Program.graphic_wait(g);
             else if (Program.MainGame.sit == 0)
-                Program.MainGame.getgrp1(g);
+                Program.MainGame.graphic_play(g);
             else
                 if (Program.MainGame.sit > 0)
-                    Program.MainGame.getgrp2(g);
+                    Program.MainGame.graphic_shop(g);
             e.Graphics.DrawImage(bmp, 0, 0);
         }
 

@@ -57,7 +57,7 @@ namespace coins_hockey
         public static System.Diagnostics.Stopwatch rectim = new System.Diagnostics.Stopwatch();
     }
 
-    class valut
+    class valut//class for JSON desurs
     {
         public string Rate;
     }

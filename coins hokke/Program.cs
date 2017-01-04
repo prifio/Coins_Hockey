@@ -45,7 +45,7 @@ namespace coins_hockey
                 if (MainGame.sit == 0) 
                     MainGame.up_date(ticktim.ElapsedMilliseconds);
                 if (Z.sit == 1 || Z.sit == 2)
-                    MainGame.menuprd();
+                    MainGame.menu_update();
                 ticktim.Restart();
             }
         }
@@ -75,9 +75,12 @@ namespace coins_hockey
                      Z.gbp = double.Parse(prprp.query.results.rate[2].Rate);
                      for (int i = 1; i < countcoin; i++)
                      {
-                         if (Z.tcoin[i].valut == 2) Z.tcoin[i].stoim = (int)(Z.tcoin[i].stoim * Z.usd);
-                         if (Z.tcoin[i].valut == 3) Z.tcoin[i].stoim = (int)(Z.tcoin[i].stoim * Z.eur);
-                         if (Z.tcoin[i].valut == 4) Z.tcoin[i].stoim = (int)(Z.tcoin[i].stoim * Z.gbp);
+                         if (Z.tcoin[i].valut == 2)
+                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.usd);
+                         if (Z.tcoin[i].valut == 3)
+                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.eur);
+                         if (Z.tcoin[i].valut == 4)
+                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.gbp);
                      }
                      double k1 = 20;
                      double k2 = (Z.usd * 100 + Z.eur * 150);
@@ -119,14 +122,14 @@ namespace coins_hockey
         {
             return a + Math.Sqrt(x) * b;
         }
-        public static void getgrp0(System.Drawing.Graphics g)
+        public static void graphic_wait(System.Drawing.Graphics g)
         {
             g.Clear(System.Drawing.Color.Maroon);
             var f = new System.Drawing.Font("Arial", 20);
             g.DrawString("Загрузка и анализ курсов валют...", f, System.Drawing.Brushes.White, 190, 250);
             border(g);
         }
-        public static void getgrp4(System.Drawing.Graphics g)
+        public static void graphic_nointernet(System.Drawing.Graphics g)
         {
             g.Clear(System.Drawing.Color.Maroon);
             var f = new System.Drawing.Font("Arial", 150);
@@ -166,15 +169,16 @@ namespace coins_hockey
         }
         public static long replay_add(long time, user[] us, coins[] coins, string filename = "replay.chrpl")
         {
-            if (time < 21) return time;
-            rec.oup.WriteLine(us[0].vrat + " " + ((int)coins[0].x) + " " + ((int)coins[0].y));
-            rec.oup.WriteLine(us[0].nap + " " + ((int)coins[1].x) + " " + ((int)coins[1].y));
-            rec.oup.WriteLine(us[0].nap + " " + ((int)coins[2].x) + " " + ((int)coins[2].y));
-            rec.oup.WriteLine(us[0].nap + " " + ((int)coins[3].x) + " " + ((int)coins[3].y));
-            rec.oup.WriteLine(us[1].vrat + " " + ((int)coins[4].x) + " " + ((int)coins[4].y));
-            rec.oup.WriteLine(us[1].nap + " " + ((int)coins[5].x) + " " + ((int)coins[5].y));
-            rec.oup.WriteLine(us[1].nap + " " + ((int)coins[6].x) + " " + ((int)coins[6].y));
-            rec.oup.WriteLine(us[1].nap + " " + ((int)coins[7].x) + " " + ((int)coins[7].y));
+            if (time < 21)
+                return time;
+            rec.oup.WriteLine(us[0].defince + " " + ((int)coins[0].x) + " " + ((int)coins[0].y));
+            rec.oup.WriteLine(us[0].atac + " " + ((int)coins[1].x) + " " + ((int)coins[1].y));
+            rec.oup.WriteLine(us[0].atac + " " + ((int)coins[2].x) + " " + ((int)coins[2].y));
+            rec.oup.WriteLine(us[0].atac + " " + ((int)coins[3].x) + " " + ((int)coins[3].y));
+            rec.oup.WriteLine(us[1].defince + " " + ((int)coins[4].x) + " " + ((int)coins[4].y));
+            rec.oup.WriteLine(us[1].atac + " " + ((int)coins[5].x) + " " + ((int)coins[5].y));
+            rec.oup.WriteLine(us[1].atac + " " + ((int)coins[6].x) + " " + ((int)coins[6].y));
+            rec.oup.WriteLine(us[1].atac + " " + ((int)coins[7].x) + " " + ((int)coins[7].y));
             rec.oup.WriteLine("0 " + ((int)coins[8].x) + " " + ((int)coins[8].y));
             rec.oup.WriteLine("0 " + ((int)coins[9].x) + " " + ((int)coins[9].y));
             rec.oup.WriteLine("0 " + ((int)coins[10].x) + " " + ((int)coins[10].y));
@@ -189,13 +193,14 @@ namespace coins_hockey
         public double x { get; set; }
         public double y { get; set; }
         public int nu { get; set; }
-        public double zam { get; set; }
+        public double speed_slowdone { get; set; }
         public Point vec { get; set; }
         Point prov { get; set; }
         bool or = false;
         public int otb { get; set; }
         int typecoin = 0;
-        public int is_gool { get; set; }
+        public int is_gool { get; set; } 
+        public double accuracy { get; private set; }
 
         public bool stop()
         {
@@ -212,7 +217,7 @@ namespace coins_hockey
                 g.DrawImage(Z.tcoin[typecoin].picre, (int)x - r, (int)y - r, r * 2, r * 2);
         }
 
-        public static coins get_number_coin(int nus, int sx, int sy, bool orl, int num, double zams = 100.0, double spx = 0, double spy = 0)
+        public static coins get_number_coin(int nus, int sx, int sy, bool orl, int num, double slowdone = 100.0, double spx = 0, double spy = 0)
         {
             var an = new coins();
             an.nu = nus;
@@ -220,12 +225,13 @@ namespace coins_hockey
             an.m = Z.tcoin[num].m;
             an.x = sx;
             an.y = sy;
-            an.zam = zams;
+            an.speed_slowdone = slowdone;
             an.or = orl;
             an.typecoin = num;
             an.otb = -1;
             an.vec = new Point();
             an.prov = new Point();
+            an.accuracy = Z.tcoin[num].accuracy;
             return an;
         }
 
@@ -237,7 +243,7 @@ namespace coins_hockey
             an.m = mass;
             an.x = sx;
             an.y = sy;
-            an.zam = zams;
+            an.speed_slowdone = zams;
             an.or = orl;
             an.typecoin = tp;
             an.otb = -1;
@@ -250,8 +256,8 @@ namespace coins_hockey
         {
             double spd = Math.Sqrt(vec.x * vec.x + vec.y * vec.y);
            
-            double spdm = spd - time * zam / 1000;
-            if (spd <= time * zam / 1000)
+            double spdm = spd - time * speed_slowdone / 1000;
+            if (spd <= time * speed_slowdone / 1000)
             {
                 vec.x = 0;
                 vec.y = 0;
@@ -381,44 +387,45 @@ namespace coins_hockey
 
     class game
     {
-        public coins[] coinarr = new coins[11];
-        public int per = 0;
-        public bool gol1 = false, gol2 = false;
-        public int ch1 = 0, ch2 = 0;
-        public int vb = -1;
-        public Point vbp = new Point();
-        public int sit = 0;
-        public user[] us = new user[2];
-        public int immunlast = 4;
-        public const int shopfull = 1000;
-        public int shopvb = 1;
-        public int shoppl = 1;
-        public int shopcur = 1;
-        public long shopwidthanim = shopfull;
-        public bool shopold = false;
-        public int shopoldcoin = 1;
-        public Stopwatch shoptim = new Stopwatch();
-        public int shopspeed = 2;
-        public bool shopanimon = false;
+        private coins[] coinarr = new coins[11];
+        private bool gool1, gool2;
+        private int ch1, ch2, money_pick, now_palyer, immunlast;
+        private Point power_kick;
+        public int sit { get; private set; }
+        private user[] us;
+        private const int shopfull = 1000;
+        private int shop_pick, shop_palyer, shop_cursor;
 
+        private long shopwidthanim = shopfull;
+        private bool shopold = false;
+        private int shopoldcoin = 1;
+        private Stopwatch shoptim = new Stopwatch();
+        private int shop_speed = 2;
+        private bool shop_animon = false;
+        
         public game()
         {
-            shoppl = 1;
+            shop_palyer = shop_pick = shop_cursor = 1;
+            us = new user[2];
             us[0] = new user();
             us[1] = new user();
+            now_palyer = ch1 = ch2 = sit = 0;
+            money_pick = -1;
+            gool1 = gool2 = false;
             new_game();
+            power_kick = new Point();
             sit = 1;
         }
         public void new_game(bool f = true)
         {
-            coinarr[0] = coins.get_number_coin(0, Z.tcoin[us[0].vrat].r + 5, 532 / 2, false, us[0].vrat);
-            coinarr[1] = coins.get_number_coin(1, 300, 532 / 2, false, us[0].nap);
-            coinarr[2] = coins.get_number_coin(2, 200, 532 / 2 - 100, false, us[0].nap);
-            coinarr[3] = coins.get_number_coin(3, 200, 532 / 2 + 100, false, us[0].nap);
-            coinarr[4] = coins.get_number_coin(4, 788 - Z.tcoin[us[1].vrat].r, 532 / 2, true, us[1].vrat);
-            coinarr[5] = coins.get_number_coin(5, 500, 532 / 2, true, us[1].nap);
-            coinarr[6] = coins.get_number_coin(6, 600, 532 / 2 - 100, true, us[1].nap);
-            coinarr[7] = coins.get_number_coin(7, 600, 532 / 2 + 100, true, us[1].nap);
+            coinarr[0] = coins.get_number_coin(0, Z.tcoin[us[0].defince].r + 5, 532 / 2, false, us[0].defince);
+            coinarr[1] = coins.get_number_coin(1, 300, 532 / 2, false, us[0].atac);
+            coinarr[2] = coins.get_number_coin(2, 200, 532 / 2 - 100, false, us[0].atac);
+            coinarr[3] = coins.get_number_coin(3, 200, 532 / 2 + 100, false, us[0].atac);
+            coinarr[4] = coins.get_number_coin(4, 788 - Z.tcoin[us[1].defince].r, 532 / 2, true, us[1].defince);
+            coinarr[5] = coins.get_number_coin(5, 500, 532 / 2, true, us[1].atac);
+            coinarr[6] = coins.get_number_coin(6, 600, 532 / 2 - 100, true, us[1].atac);
+            coinarr[7] = coins.get_number_coin(7, 600, 532 / 2 + 100, true, us[1].atac);
             coinarr[8] = coins.get_number_coin(8, 400, 532 / 2 - 50, true, 0);
             coinarr[9] = coins.get_number_coin(9, 400, 532 / 2, true, 0);
             coinarr[10] = coins.get_number_coin(10, 400, 532 / 2 + 50, true, 0);
@@ -454,41 +461,41 @@ namespace coins_hockey
             for (int i = coinarr.Length - 3; i < coinarr.Length; i++)
             {
                 if (coinarr[i].x < coinarr[i].r && coinarr[i].y >= Z.clheight / 2 - 50 && coinarr[i].y <= Z.clheight / 2 + 50 && immunlast == 0)
-                    gol1 = true;
+                    gool1 = true;
                 if (coinarr[i].x > Z.clwidth - coinarr[i].r && coinarr[i].y >= Z.clheight / 2 - 50 && coinarr[i].y <= Z.clheight / 2 + 50 && immunlast == 0)
-                    gol2 = true;
+                    gool2 = true;
             }
             for (int i = coinarr.Length - 3; i < coinarr.Length; i++)
             {
                 if (coinarr[i].is_gool == 1)
                 {
                     if (immunlast == 0)
-                        gol1 = true;
+                        gool1 = true;
                     coinarr[i].is_gool = 0;
                 }
                 if (coinarr[i].is_gool == 2)
                 {
                     if (immunlast == 0)
-                        gol2 = true;
+                        gool2 = true;
                     coinarr[i].is_gool = 0;
                 }
             }
 
-            if (gol1 || gol2)
+            if (gool1 || gool2)
             {
                 new_game(false);
             }
-            if (gol1)
+            if (gool1)
             {
-                gol1 = false;
+                gool1 = false;
                 ch2++;
-                per = 0;
+                now_palyer = 0;
             }
-            if (gol2)
+            if (gool2)
             {
-                gol2 = false;
+                gool2 = false;
                 ch1++;
-                per = 1;
+                now_palyer = 1;
             }
             if (ch1 >= 2)
             {
@@ -498,7 +505,7 @@ namespace coins_hockey
                 if (ch2 > 0)
                     us[1].mon += (int)((Z.koofa + Z.koofb * Math.Sqrt(k2)) * 2 / 3);
                 sit = 1;
-                shoppl = 1;
+                shop_palyer = 1;
             }
             else
                 if (ch2 >= 2)
@@ -509,16 +516,16 @@ namespace coins_hockey
                     if (ch1 > 0)
                         us[0].mon += (int)((Z.koofa + Z.koofb * Math.Sqrt(k1)) * 2 / 3);
                     sit = 1;
-                    shoppl = 1;
+                    shop_palyer = 1;
                 }
         }
-        public void menuprd()
+        public void menu_update()
         {
-            if (shopanimon)
+            if (shop_animon)
             {
                 if (shopold)
                 {
-                    shopwidthanim -= shopspeed * shoptim.ElapsedMilliseconds;
+                    shopwidthanim -= shop_speed * shoptim.ElapsedMilliseconds;
                     shoptim.Restart();
                     if (shopwidthanim <= 0)
                     {
@@ -528,17 +535,17 @@ namespace coins_hockey
                 }
                 else
                 {
-                    shopwidthanim += shopspeed * shoptim.ElapsedMilliseconds;
+                    shopwidthanim += shop_speed * shoptim.ElapsedMilliseconds;
                     shoptim.Restart();
                     if (shopwidthanim >= shopfull)
                     {
-                        shopanimon = false;
+                        shop_animon = false;
                         shopwidthanim = shopfull;
                     }
                 }
             }
         }
-        public void getgrp1(System.Drawing.Graphics g)
+        public void graphic_play(System.Drawing.Graphics g)
         {
             g.Clear(System.Drawing.Color.White);
             g.DrawLine(new Pen(Color.Maroon), 0, 0, Z.clwidth, 0);
@@ -556,7 +563,7 @@ namespace coins_hockey
             g.FillEllipse(System.Drawing.Brushes.White, Z.clwidth - 2 * Z.radangl - 1, Z.clheight - 2 * Z.radangl - 1, Z.radangl * 2, Z.radangl * 2);
 
             g.FillRectangle(System.Drawing.Brushes.Red, 0, 532 / 2 - 50, 3, 100);
-            g.FillRectangle(System.Drawing.Brushes.Red, 790, 532 / 2 - 50, 3, 100);
+            g.FillRectangle(System.Drawing.Brushes.Red, 789, 532 / 2 - 50, 3, 100);
             
             for (int i = 0; i < 11; i++)
             {
@@ -567,16 +574,16 @@ namespace coins_hockey
                 coinarr[i].Draw(g);
             }
 
-            if (vb != -1)
+            if (money_pick != -1)
             {
-                var spd = vbp.x * vbp.x + vbp.y * vbp.y;
+                var spd = power_kick.x * power_kick.x + power_kick.y * power_kick.y;
                 if (spd > Z.vismspd * Z.vismspd)
                 {
-                    g.DrawLine(System.Drawing.Pens.Red, (int)coinarr[vb].x, (int)coinarr[vb].y, (int)coinarr[vb].x + (int)(vbp.x * Z.vismspd / Math.Sqrt(spd)), (int)coinarr[vb].y + (int)(vbp.y * Z.vismspd / Math.Sqrt(spd)));
+                    g.DrawLine(System.Drawing.Pens.Red, (int)coinarr[money_pick].x, (int)coinarr[money_pick].y, (int)coinarr[money_pick].x + (int)(power_kick.x * Z.vismspd / Math.Sqrt(spd)), (int)coinarr[money_pick].y + (int)(power_kick.y * Z.vismspd / Math.Sqrt(spd)));
                 }
                 else
                 {
-                    g.DrawLine(System.Drawing.Pens.Green, (int)coinarr[vb].x, (int)coinarr[vb].y, (int)coinarr[vb].x + (int)(vbp.x), (int)coinarr[vb].y + (int)(vbp.y));
+                    g.DrawLine(System.Drawing.Pens.Green, (int)coinarr[money_pick].x, (int)coinarr[money_pick].y, (int)coinarr[money_pick].x + (int)(power_kick.x), (int)coinarr[money_pick].y + (int)(power_kick.y));
                 }
             }
             var f = new System.Drawing.Font("Arial", 30);
@@ -589,47 +596,49 @@ namespace coins_hockey
                 g.DrawString("immun " + (immunlast - 1).ToString(), fn, Brushes.Black, 60, 5 + (yk++) * 10);
             border(g);
         }
-        public void getgrp2(System.Drawing.Graphics g)
+        public void graphic_shop(System.Drawing.Graphics g)
         {
             g.Clear(Color.Maroon);
             var fn = new System.Drawing.Font("Courier", 15);
-            g.FillRectangle(Brushes.Red, 5, shopvb * 20, 170, 23);
+            g.FillRectangle(Brushes.Red, 5, shop_pick * 20 - 7, 130, 20);
             for (int i = 1; i < Program.countcoin; i++)
             {
-                g.DrawString(Z.tcoin[i].name, fn, System.Drawing.Brushes.Bisque, 10, i * 20);
+                g.DrawString(Z.tcoin[i].name, fn, System.Drawing.Brushes.Bisque, 10, i * 20 - 10);
             }
-            if (shopcur <= Program.countcoin && shopcur != -1)
-                g.DrawString(Z.tcoin[shopcur].name, fn, System.Drawing.Brushes.White, 10, shopcur * 20);
+            if (shop_cursor <= Program.countcoin && shop_cursor != -1)
+                g.DrawString(Z.tcoin[shop_cursor].name, fn, System.Drawing.Brushes.White, 10, shop_cursor * 20 - 10);
             fn = new System.Drawing.Font("Courier", 30);
             //g.DrawLine(Pens.Black, 200, 0, 200, Z.clheight);
-            g.DrawString("Масса: " + Z.tcoin[shopvb].m.ToString(), fn, System.Drawing.Brushes.White, 260, 50);
-            g.DrawString("Диаметр: " + Z.tcoin[shopvb].r.ToString(), fn, System.Drawing.Brushes.White, 260, 100);
-            g.DrawString("Кол-во: " + us[shoppl - 1].coin[shopvb].ToString(), fn, System.Drawing.Brushes.White, 260, 150);
-            g.DrawString("Цена: " + Z.tcoin[shopvb].stoim.ToString(), fn, System.Drawing.Brushes.White, 260, 200);
-            g.DrawString("Игрок " + shoppl, fn, System.Drawing.Brushes.White, 260, Z.clheight - 120);
-            g.DrawString("Денег: " + us[shoppl - 1].mon.ToString(), fn, System.Drawing.Brushes.White, 260, Z.MainForm.ClientRectangle.Height - 70);
+            g.DrawString("Масса: " + Z.tcoin[shop_pick].m.ToString(), fn, System.Drawing.Brushes.White, 260, 30);
+            g.DrawString("Диаметр: " + Z.tcoin[shop_pick].r.ToString(), fn, System.Drawing.Brushes.White, 260, 80);
+            g.DrawString("Цена: " + Z.tcoin[shop_pick].cost.ToString(), fn, System.Drawing.Brushes.White, 260, 130);
+            int procentacc = (int)((1 - Z.tcoin[shop_pick].accuracy * 8 / Math.PI) * 100);
+            g.DrawString("Точность: " + procentacc.ToString(), fn, System.Drawing.Brushes.White, 260, 180);
+            g.DrawString("Кол-во: " + us[shop_palyer - 1].coin[shop_pick].ToString(), fn, System.Drawing.Brushes.White, 260, 230);
+            g.DrawString("Игрок " + shop_palyer, fn, System.Drawing.Brushes.White, 260, Z.clheight - 120);
+            g.DrawString("Денег: " + us[shop_palyer - 1].mon.ToString(), fn, System.Drawing.Brushes.White, 260, Z.MainForm.ClientRectangle.Height - 70);
             g.DrawString("Купить", fn, System.Drawing.Brushes.Bisque, 600, 250);
             g.DrawString("Атака", fn, System.Drawing.Brushes.Bisque, 600, 300);
             g.DrawString("Защита", fn, System.Drawing.Brushes.Bisque, 600, 350);
             g.DrawString("Далее", fn, System.Drawing.Brushes.Bisque, 600, 400);
-            if (shopcur == Program.countcoin + 1)
+            if (shop_cursor == Program.countcoin + 1)
                 g.DrawString("Купить", fn, System.Drawing.Brushes.White, 600, 250);
-            if (shopcur == Program.countcoin + 2)
+            if (shop_cursor == Program.countcoin + 2)
             {
                 g.DrawString("Атака", fn, System.Drawing.Brushes.White, 600, 300);
-                g.DrawImage(Z.tcoin[us[shoppl - 1].nap].picob, 640, 80, 80, 80);
+                g.DrawImage(Z.tcoin[us[shop_palyer - 1].atac].picob, 640, 80, 80, 80);
             }
-            if (shopcur == Program.countcoin + 3)
+            if (shop_cursor == Program.countcoin + 3)
             {
                 g.DrawString("Защита", fn, System.Drawing.Brushes.White, 600, 350);
-                g.DrawImage(Z.tcoin[us[shoppl - 1].vrat].picob, 640, 80, 80, 80);
+                g.DrawImage(Z.tcoin[us[shop_palyer - 1].defince].picob, 640, 80, 80, 80);
             }
-            if (shopcur == Program.countcoin + 4)
+            if (shop_cursor == Program.countcoin + 4)
                 g.DrawString("Далее", fn, System.Drawing.Brushes.White, 600, 400);
-            if (!shopanimon)
+            if (!shop_animon)
             {
-                g.DrawImage(Z.tcoin[shopvb].picob, 310, 300, 80, 80);
-                g.DrawImage(Z.tcoin[shopvb].picre, 410, 300, 80, 80);
+                g.DrawImage(Z.tcoin[shop_pick].picob, 310, 300, 80, 80);
+                g.DrawImage(Z.tcoin[shop_pick].picre, 410, 300, 80, 80);
             }
             else if (shopold)
             {
@@ -638,8 +647,8 @@ namespace coins_hockey
             }
             else if (!shopold)
             {
-                g.DrawImage(Z.tcoin[shopvb].picob, 310 + 40 - 40 * shopwidthanim / shopfull, 300, 80 * shopwidthanim / shopfull, 80);
-                g.DrawImage(Z.tcoin[shopvb].picre, 410 + 40 - 40 * shopwidthanim / shopfull, 300, 80 * shopwidthanim / shopfull, 80);
+                g.DrawImage(Z.tcoin[shop_pick].picob, 310 + 40 - 40 * shopwidthanim / shopfull, 300, 80 * shopwidthanim / shopfull, 80);
+                g.DrawImage(Z.tcoin[shop_pick].picre, 410 + 40 - 40 * shopwidthanim / shopfull, 300, 80 * shopwidthanim / shopfull, 80);
             }
             border(g);
         }
@@ -656,21 +665,78 @@ namespace coins_hockey
                 g.DrawString("X", new Font("Arial", 15), Brushes.CornflowerBlue, Z.clwidth - 18, -3);
 
         }
+        public void save_game()
+        {
+            try
+            {
+                var oup = System.IO.File.CreateText("save.txt");
+                oup.WriteLine(us[0].ToString());
+                oup.WriteLine(us[1].ToString());
+                oup.WriteLine(sit + " " + ch1 + " " + ch2);
+                oup.Close();
+                Spinet.Spinet.SpiFile("save.txt");
+            }
+            catch
+            {
+
+            }
+        }
+        public void read_game()
+        {
+            try
+            {
+                Spinet.Spinet.UnSpiFile("save.txt");
+                var inp = System.IO.File.OpenText("save.txt");
+                us[0].ReadSave(inp.ReadLine());
+                us[1].ReadSave(inp.ReadLine());
+                var sr = inp.ReadLine().Split().Select(x1 => int.Parse(x1)).ToArray();
+                inp.Close();
+                Spinet.Spinet.SpiFile("save.txt");
+                sit = sr[0];
+                ch1 = sr[1];
+                ch2 = sr[2];
+                if (sit > 0) shop_palyer = sit;
+                new_game(false);
+            }
+            catch
+            { }
+        }
+        public void start_record()
+        {
+            try
+            {
+                rec.record = !rec.record;
+                if (rec.record)
+                    rec.oup = System.IO.File.CreateText("replay.chrpl");
+                else
+                    rec.oup.Close();
+            }
+            catch
+            { }
+        }
+        public void Pause()
+        {
+
+        }
+        public void Run()
+        {
+
+        }
         public void klik(object sender, KeyEventArgs e)
         {
             if (sit == 1 || sit == 2)
             {
                 if (e.KeyCode == System.Windows.Forms.Keys.S && !e.Control)
                 {
-                    shopvb = (shopvb + 1) % Program.countcoin;
-                    if (shopvb == 0) 
-                        shopvb++;
+                    shop_pick = (shop_pick + 1) % Program.countcoin;
+                    if (shop_pick == 0) 
+                        shop_pick++;
                 }
                 if (e.KeyCode == System.Windows.Forms.Keys.W)
                 {
-                    shopvb = (shopvb + Program.countcoin - 1) % Program.countcoin;
-                    if (shopvb == 0) shopvb--;
-                    shopvb = (shopvb + Program.countcoin) % Program.countcoin;
+                    shop_pick = (shop_pick + Program.countcoin - 1) % Program.countcoin;
+                    if (shop_pick == 0) shop_pick--;
+                    shop_pick = (shop_pick + Program.countcoin) % Program.countcoin;
                 }
                 if (e.KeyCode == System.Windows.Forms.Keys.Enter)
                     buy_coin();
@@ -682,54 +748,11 @@ namespace coins_hockey
                     next_magaz();
             }
             if (e.KeyCode == System.Windows.Forms.Keys.S && e.Control)
-            {
-                try
-                {
-                    var oup = System.IO.File.CreateText("save.txt");
-                    oup.WriteLine(us[0].ToString());
-                    oup.WriteLine(us[1].ToString());
-                    oup.WriteLine(sit + " " + ch1 + " " + ch2);
-                    oup.Close();
-                    Spinet.Spinet.SpiFile("save.txt");
-                }
-                catch
-                {
-
-                }
-            }
+                save_game();
             if (e.KeyCode == System.Windows.Forms.Keys.R && e.Control)
-            {
-                try
-                {
-                    Spinet.Spinet.UnSpiFile("save.txt");
-                    var inp = System.IO.File.OpenText("save.txt");
-                    us[0].ReadSave(inp.ReadLine());
-                    us[1].ReadSave(inp.ReadLine());
-                    var sr = inp.ReadLine().Split().Select(x1 => int.Parse(x1)).ToArray();
-                    inp.Close();
-                    Spinet.Spinet.SpiFile("save.txt");
-                    sit = sr[0];
-                    ch1 = sr[1];
-                    ch2 = sr[2];
-                    if (sit > 0) shoppl = sit;
-                    new_game(false);
-                }
-                catch
-                { }
-            }
+                read_game();
             if (e.KeyCode == System.Windows.Forms.Keys.R && !e.Control)
-            {
-                try
-                {
-                    rec.record = !rec.record;
-                    if (rec.record)
-                        rec.oup = System.IO.File.CreateText("replay.chrpl");
-                    else
-                        rec.oup.Close();
-                }
-                catch
-                { }
-            }
+                start_record();
         }
         public bool coin_stop()
         {
@@ -760,30 +783,30 @@ namespace coins_hockey
             {
                 if (e.Button == System.Windows.Forms.MouseButtons.Right)
                 {
-                    vb = -1;
+                    money_pick = -1;
                     return;
                 }
-                for (int i = per * 4 + 1; i < per * 4 + 4; i++)
+                for (int i = now_palyer * 4 + 1; i < now_palyer * 4 + 4; i++)
                 {
 
                     if ((coinarr[i].x - e.X) * (coinarr[i].x - e.X) +
                         (coinarr[i].y - e.Y) * (coinarr[i].y - e.Y) <
                         coinarr[i].r * coinarr[i].r)
                     {
-                        vb = i;
+                        money_pick = i;
                     }
                 }
             }
             if (sit == 1 || sit == 2)
             {
-                if (e.Y > 20 && e.X < 300 && e.Y < Program.countcoin * 20 && shopvb != e.Y / 20)
+                if (e.Y > 20 && e.X < 300 && e.Y < Program.countcoin * 20 && shop_pick != e.Y / 20)
                 {
                     if (!shopold)
-                        shopoldcoin = shopvb;
-                    shopanimon = true;
+                        shopoldcoin = shop_pick;
+                    shop_animon = true;
                     shoptim.Restart();
                     shopold = true;
-                    shopvb = e.Y / 20;
+                    shop_pick = e.Y / 20;
                 }
                 if (e.Y > 250 && e.Y < 300 && e.X > 600)
                     buy_coin();
@@ -815,18 +838,18 @@ namespace coins_hockey
             if (sit == 1 || sit == 2)
             {
                 if (e.Y > 20 && e.X < 300 && e.Y < Program.countcoin * 20)
-                    shopcur = e.Y / 20;
+                    shop_cursor = e.Y / 20;
                 else if (e.Y > 250 && e.Y < 450 && e.X > 600)
-                    shopcur = Program.countcoin + (e.Y - 250) / 50 + 1;
+                    shop_cursor = Program.countcoin + (e.Y - 250) / 50 + 1;
                 else
-                    shopcur = -1;
+                    shop_cursor = -1;
             }
             if (sit == 0)
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.None && vb != -1)
+                if (e.Button != System.Windows.Forms.MouseButtons.None && money_pick != -1)
                 {
-                    vbp.x = -coinarr[vb].x + e.X;
-                    vbp.y = -coinarr[vb].y + e.Y;
+                    power_kick.x = -coinarr[money_pick].x + e.X;
+                    power_kick.y = -coinarr[money_pick].y + e.Y;
                 }
             }
         }
@@ -835,56 +858,60 @@ namespace coins_hockey
             Z.movewindow = false;
             if (sit == 0)
             {
-                if (vb != -1)
+                if (money_pick != -1)
                 {
                     var otn = 1.0 * Z.mspd / Z.vismspd;
-                    var spd = (vbp.x * vbp.x + vbp.y * vbp.y) * otn * otn;
+                    var spd = (power_kick.x * power_kick.x + power_kick.y * power_kick.y) * otn * otn;
+                    Point speed = new Point();
                     if (spd > Z.mspd * Z.mspd)
                     {
-                        coinarr[vb].vec.x = -(vbp.x * otn * Z.mspd / Math.Sqrt(spd));
-                        coinarr[vb].vec.y = -(vbp.y * otn * Z.mspd / Math.Sqrt(spd));
+                        speed.x = -(power_kick.x * otn * Z.mspd / Math.Sqrt(spd));
+                        speed.y = -(power_kick.y * otn * Z.mspd / Math.Sqrt(spd));
                     }
                     else
                     {
-                        coinarr[vb].vec.x = -vbp.x * otn;
-                        coinarr[vb].vec.y = -vbp.y * otn;
+                        speed.x = -power_kick.x * otn;
+                        speed.y = -power_kick.y * otn;
                     }
-                    vb = -1;
-                    per = (per + 1) % 2;
+                    Point rot = geom.RandomAngel(-coinarr[money_pick].accuracy, coinarr[money_pick].accuracy);
+                    speed = geom.Rotate(speed, rot);
+                    coinarr[money_pick].vec = speed;
+                    money_pick = -1;
+                    now_palyer = (now_palyer + 1) % 2;
                     immunlast = Math.Max(0, immunlast - 1);
                 }
             }
         }
         public void set_def()
         {
-            if (us[shoppl - 1].coin[shopvb] >= 1 &&
-                       (Z.tcoin[shopvb].m >= Z.tcoin[us[shoppl - 1].nap].m ||
-                        Z.tcoin[shopvb].r >= Z.tcoin[us[shoppl - 1].nap].r))
+            if (us[shop_palyer - 1].coin[shop_pick] >= 1 &&
+                       (Z.tcoin[shop_pick].m >= Z.tcoin[us[shop_palyer - 1].atac].m ||
+                        Z.tcoin[shop_pick].r >= Z.tcoin[us[shop_palyer - 1].atac].r))
             {
-                us[shoppl - 1].coin[us[shoppl - 1].vrat] += 1;
-                us[shoppl - 1].coin[shopvb] -= 1;
-                us[shoppl - 1].vrat = shopvb;
+                us[shop_palyer - 1].coin[us[shop_palyer - 1].defince] += 1;
+                us[shop_palyer - 1].coin[shop_pick] -= 1;
+                us[shop_palyer - 1].defince = shop_pick;
             }
         }
         public void set_atac()
         {
-            if (us[shoppl - 1].coin[shopvb] >= 3 &&
-               (Z.tcoin[shopvb].m <= Z.tcoin[us[shoppl - 1].vrat].m ||
-                Z.tcoin[shopvb].r <= Z.tcoin[us[shoppl - 1].vrat].r))
+            if (us[shop_palyer - 1].coin[shop_pick] >= 3 &&
+               (Z.tcoin[shop_pick].m <= Z.tcoin[us[shop_palyer - 1].defince].m ||
+                Z.tcoin[shop_pick].r <= Z.tcoin[us[shop_palyer - 1].defince].r))
             {
 
-                us[shoppl - 1].coin[us[shoppl - 1].nap] += 3;
-                us[shoppl - 1].coin[shopvb] -= 3;
-                us[shoppl - 1].nap = shopvb;
+                us[shop_palyer - 1].coin[us[shop_palyer - 1].atac] += 3;
+                us[shop_palyer - 1].coin[shop_pick] -= 3;
+                us[shop_palyer - 1].atac = shop_pick;
             }
 
         }
         public void buy_coin()
         {
-            if (us[shoppl - 1].mon >= Z.tcoin[shopvb].stoim)
+            if (us[shop_palyer - 1].mon >= Z.tcoin[shop_pick].cost)
             {
-                us[shoppl - 1].mon -= Z.tcoin[shopvb].stoim;
-                us[shoppl - 1].coin[shopvb]++;// -= Z.tcoin[magaz.vb].stoim;
+                us[shop_palyer - 1].mon -= Z.tcoin[shop_pick].cost;
+                us[shop_palyer - 1].coin[shop_pick]++;// -= Z.tcoin[magaz.vb].stoim;
             }
         }
         public void next_magaz()
@@ -892,7 +919,7 @@ namespace coins_hockey
             if (sit == 1)
             {
                 sit++;
-                shoppl = 2;
+                shop_palyer = 2;
             }
             else
             {
@@ -905,15 +932,15 @@ namespace coins_hockey
     class user
     {
         public int[] coin { get; set; }
-        public int nap { get; set; }
-        public int vrat { get; set; }
+        public int atac { get; set; }
+        public int defince { get; set; }
         public int mon { get; set; }
         public user()
         {
             coin = new int[Program.countcoin];
-            nap = 1;
-            vrat = 1;
-            mon = 0;
+            atac = 1;
+            defince = 1;
+            mon = 1000000;
         }
         public override string ToString()
         {
@@ -922,7 +949,7 @@ namespace coins_hockey
             {
                 an = an + " " + coin[i];
             }
-            return an + " " + nap.ToString() + " " + vrat.ToString() + " " + mon;
+            return an + " " + atac.ToString() + " " + defince.ToString() + " " + mon;
         }
         public void ReadSave(string s)
         {
@@ -936,38 +963,49 @@ namespace coins_hockey
                 coin[i] = sr[i - 1];
             }
 
-            nap = sr[sr.Length - 3];
-            vrat = sr[sr.Length - 2];
+            atac = sr[sr.Length - 3];
+            defince = sr[sr.Length - 2];
             mon = sr[sr.Length - 1];
         }
         public int sen_arm()
         {
-            return Z.tcoin[nap].stoim * 3 + Z.tcoin[vrat].stoim;
+            return Z.tcoin[atac].cost * 3 + Z.tcoin[defince].cost;
         }
     }
 
     class cointype
     {
-        public int r { get; set; }
-        public int m { get; set; }
-        public int stoim { get; set; }
-        public string name { get; set; }
-        public System.Drawing.Image picob { get; set; }
-        public Image picre { get; set; }
+        public int r { get; private set; }
+        public int m { get; private set; }
+        public int cost { get; set; }
+        public string name { get; private set; }
+        public System.Drawing.Image picob { get; private set; }
+        public Image picre { get; private set; }
+        public double accuracy { get; private set; }
         public int valut = 0;
         public cointype(int r1, int m1, int s1, string n, string fileor, string filere, string vlt, string ras = ".png")
         {
             m = m1;
             r = r1;
-            stoim = s1;
+            cost = s1;
             name = n;
             picob = Image.FromFile("textures\\" + fileor + ras);
             picre = Image.FromFile("textures\\" + filere + ras);
-            if (vlt == "r") valut = 1;
-            if (vlt == "s") valut = 2;
-            if (vlt == "e") valut = 3;
-            if (vlt == "f") valut = 4;
-            if (vlt == "cd") valut = 5;
+            int fine = m1 - 300 + (r1 - 21) * 120;//what bigger than 1 ruble
+            if (fine <= 0)
+                accuracy = 0;
+            else
+                accuracy = Math.PI / 8 * fine / (900 + 7 * 120);//accuracy for 2 pounds = PI / 8
+            if (vlt == "r")
+                valut = 1;
+            if (vlt == "s")
+                valut = 2;
+            if (vlt == "e")
+                valut = 3;
+            if (vlt == "f")
+                valut = 4;
+            if (vlt == "cd")
+                valut = 5;
         }
     }
 }
