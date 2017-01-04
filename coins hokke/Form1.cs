@@ -21,6 +21,7 @@ namespace coins_hockey
             this.pictureBox1.MouseDown += Program.mdklik;
             this.pictureBox1.MouseUp += Program.muklik;
             this.pictureBox1.MouseMove += Program.mmklik;
+            this.FormClosed += Program.Close;
             this.FormBorderStyle = FormBorderStyle.None;
         }
 
@@ -28,7 +29,7 @@ namespace coins_hockey
         {
         }
 
-        public void drawoll()
+        public void draw_all()
         {
             pictureBox1.Refresh();
         }

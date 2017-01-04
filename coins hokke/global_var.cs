@@ -47,6 +47,7 @@ namespace coins_hockey
         public static bool movewindow = false;
         public static bool closeon = false, mininmon = false;
         public static int radangl = 100;
+        public static bool use_internet;
     }
 
     class rec

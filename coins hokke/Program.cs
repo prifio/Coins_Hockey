@@ -21,6 +21,7 @@ namespace coins_hockey
         //[STAThread]
         public static game MainGame = new game();
         public const int countcoin = 26;
+
         public static void Main()
         {
             Application.EnableVisualStyles();
@@ -29,96 +30,108 @@ namespace coins_hockey
             Z.MainForm = new Form1();
             Z.sit = -1;
             Z.MainForm.Show();
-            Z.MainForm.drawoll(); 
-            set_curs();
-            if (Z.sit != -2)
-                Z.sit = 1;
-
+            Z.MainForm.draw_all();
+            set_rate();
+            Z.MainForm.draw_all();
+            if (Z.sit == -2)
+            {
+                Z.use_internet = false;
+                Z.eur = 65;
+                Z.gbp = 75;
+                Z.usd = 60;
+                apply_rate();
+            }
+            else
+                Z.use_internet = true;
+            Z.sit = 1;
             Z.clwidth = Z.MainForm.ClientSize.Width;
             Z.clheight = Z.MainForm.ClientSize.Height;
             var ticktim = new System.Diagnostics.Stopwatch();
             ticktim.Start();
             while (Z.MainForm.Created)
             {
-                Z.MainForm.drawoll();
+                Z.MainForm.draw_all();
                 Application.DoEvents();
-                if (MainGame.sit == 0) 
-                    MainGame.up_date(ticktim.ElapsedMilliseconds);
+                if (MainGame.sit == 0)
+                    MainGame.update(ticktim.ElapsedMilliseconds);
                 if (Z.sit == 1 || Z.sit == 2)
                     MainGame.menu_update();
                 ticktim.Restart();
             }
         }
-        public static void set_curs()
+        public static void set_rate()
         {
-                 try
-                {
-                    Ping ping = new Ping();
-                    PingReply reply = ping.Send("ya.ru");
-                    Z.sit = -1;
-                }
-                catch
-                {
-                    Z.sit = -2;
-                }
-                 if (Z.sit != -2)
-                 {
-                     WebRequest wrGETURL;
-                     wrGETURL = WebRequest.Create("https://query.yahooapis.com/v1/public/yql?q=select+*+from+yahoo.finance.xchange+where+pair+=+%22USDRUB,EURRUB,GBPRUB,CADRUB%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=");
-                     var objStream = wrGETURL.GetResponse().GetResponseStream();
-                     var objReader = new StreamReader(objStream);
-                     string json = objReader.ReadLine();
-                     var prprp = new { query = new { results = new { rate = new valut[3] } } };
-                     prprp = JsonConvert.DeserializeAnonymousType(json, prprp);
-                     Z.usd = double.Parse(prprp.query.results.rate[0].Rate);
-                     Z.eur = double.Parse(prprp.query.results.rate[1].Rate);
-                     Z.gbp = double.Parse(prprp.query.results.rate[2].Rate);
-                     for (int i = 1; i < countcoin; i++)
-                     {
-                         if (Z.tcoin[i].valut == 2)
-                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.usd);
-                         if (Z.tcoin[i].valut == 3)
-                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.eur);
-                         if (Z.tcoin[i].valut == 4)
-                            Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.gbp);
-                     }
-                     double k1 = 20;
-                     double k2 = (Z.usd * 100 + Z.eur * 150);
-                     double k3 = (Z.eur * 500);
-                     double k4 = (Z.eur * 200 + Z.gbp * 300);
-                     double k5 = (Z.gbp * 200 + Z.eur * 600);
-                     double got = 100000000;
-                     double na, nb, ga = 0, gb = 0;
-                     double ot = 100000000;
-                     na = 0;
-                     nb = 0;
-                     while (na <= 30)
-                     {
-                         nb = 0;
-                         while (nb < 50)
-                         {
-                             ot = 0;
-                             ot += Math.Pow(f(na, nb, k1) - 20, 2);
-                             ot += Math.Pow(f(na, nb, k2) - k2 / 4 * 6 / 10, 2);
-                             ot += Math.Pow(f(na, nb, k3) - k3 / 4 * 6 / 15, 2);
-                             ot += Math.Pow(f(na, nb, k4) - k4 / 4 * 6 / 18, 2);
-                             ot += Math.Pow(f(na, nb, k5) - k5 / 4 * 6 / 25, 2);
-                             if (ot < got)
-                             {
-                                 ga = na;
-                                 gb = nb;
-                                 got = ot;
-                             }
-                             nb += 0.06;
-                         }
-                         na += 0.05;
-                     }
-                     Z.koofa = ga;
-                     Z.koofb = gb;
-                     //Application.Exit();
-                 }
+            try
+            {
+                Ping ping = new Ping();
+                PingReply reply = ping.Send("ya.ru");
+                Z.sit = -1;
+            }
+            catch
+            {
+                Z.sit = -2;
+            }
+            if (Z.sit != -2)
+            {
+                WebRequest wrGETURL;
+                wrGETURL = WebRequest.Create("https://query.yahooapis.com/v1/public/yql?q=select+*+from+yahoo.finance.xchange+where+pair+=+%22USDRUB,EURRUB,GBPRUB,CADRUB%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=");
+                var objStream = wrGETURL.GetResponse().GetResponseStream();
+                var objReader = new StreamReader(objStream);
+                string json = objReader.ReadLine();
+                var prprp = new { query = new { results = new { rate = new valut[3] } } };
+                prprp = JsonConvert.DeserializeAnonymousType(json, prprp);
+                Z.usd = double.Parse(prprp.query.results.rate[0].Rate);
+                Z.eur = double.Parse(prprp.query.results.rate[1].Rate);
+                Z.gbp = double.Parse(prprp.query.results.rate[2].Rate);
+                apply_rate();
+            }
         }
-        static double f(double a, double b, double x)
+        public static void apply_rate()
+        {
+            for (int i = 1; i < countcoin; i++)
+            {
+                if (Z.tcoin[i].valut == 2)
+                    Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.usd);
+                if (Z.tcoin[i].valut == 3)
+                    Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.eur);
+                if (Z.tcoin[i].valut == 4)
+                    Z.tcoin[i].cost = (int)(Z.tcoin[i].cost * Z.gbp);
+            }
+            double k1 = 20;
+            double k2 = (Z.usd * 100 + Z.eur * 150);
+            double k3 = (Z.eur * 500);
+            double k4 = (Z.eur * 200 + Z.gbp * 300);
+            double k5 = (Z.gbp * 200 + Z.eur * 600);
+            double got = 100000000;
+            double na, nb, ga = 0, gb = 0;
+            double ot = 100000000;
+            na = 0;
+            nb = 0;
+            while (na <= 30)
+            {
+                nb = 0;
+                while (nb < 50)
+                {
+                    ot = 0;
+                    ot += Math.Pow(f(na, nb, k1) - 20, 2);
+                    ot += Math.Pow(f(na, nb, k2) - k2 / 4 * 6 / 10, 2);
+                    ot += Math.Pow(f(na, nb, k3) - k3 / 4 * 6 / 15, 2);
+                    ot += Math.Pow(f(na, nb, k4) - k4 / 4 * 6 / 18, 2);
+                    ot += Math.Pow(f(na, nb, k5) - k5 / 4 * 6 / 25, 2);
+                    if (ot < got)
+                    {
+                        ga = na;
+                        gb = nb;
+                        got = ot;
+                    }
+                    nb += 0.06;
+                }
+                na += 0.05;
+            }
+            Z.koofa = ga;
+            Z.koofb = gb;
+        }
+        private static double f(double a, double b, double x)
         {
             return a + Math.Sqrt(x) * b;
         }
@@ -136,6 +149,7 @@ namespace coins_hockey
             g.DrawString(":(", f, System.Drawing.Brushes.White, 20, 30);
             f = new System.Drawing.Font("Courier", 25);
             g.DrawString("Your PC hasn't internet connection", f, System.Drawing.Brushes.White, 20, 360);
+            g.DrawString("Wait, while rates are applying defout", f, System.Drawing.Brushes.White, 20, 400);
             border(g);
         }
         public static void border(System.Drawing.Graphics g)
@@ -153,7 +167,7 @@ namespace coins_hockey
         }
         public static void klik(object sender, KeyEventArgs e)
         {
-             MainGame.klik(sender, e);
+            MainGame.klik(sender, e);
         }
         public static void mdklik(object sender, MouseEventArgs e)
         {
@@ -184,6 +198,10 @@ namespace coins_hockey
             rec.oup.WriteLine("0 " + ((int)coins[10].x) + " " + ((int)coins[10].y));
             return time - 21;
         }
+        public static void Close(object sender, System.EventArgs e)
+        {
+            MainGame.close();
+        }
     }
 
     class coins
@@ -199,7 +217,7 @@ namespace coins_hockey
         bool or = false;
         public int otb { get; set; }
         int typecoin = 0;
-        public int is_gool { get; set; } 
+        public int is_gool { get; set; }
         public double accuracy { get; private set; }
 
         public bool stop()
@@ -255,7 +273,7 @@ namespace coins_hockey
         public void move(double time, coins[] coin)
         {
             double spd = Math.Sqrt(vec.x * vec.x + vec.y * vec.y);
-           
+
             double spdm = spd - time * speed_slowdone / 1000;
             if (spd <= time * speed_slowdone / 1000)
             {
@@ -374,14 +392,14 @@ namespace coins_hockey
             change_for_board(helpsit);
             double hx = Z.radangl - x, hy = Z.radangl - y;
             double crpr = vec.x * hx + vec.y * hy, dtpr = vec.x * hy - vec.y * hx;
-            double oldv = vec.x * vec.x + vec.y + vec.y; 
+            double oldv = vec.x * vec.x + vec.y + vec.y;
             vec.x = (-crpr * hx + dtpr * hy) / (hx * hx + hy * hy);
             vec.y = (-dtpr * hx - hy * crpr) / (hx * hx + hy * hy);
             otb = -1;
             double dist = Math.Sqrt((Z.radangl - x) * (Z.radangl - x) + (Z.radangl - y) * (Z.radangl - y));
             x = (x - Z.radangl) * (Z.radangl - r) / dist + Z.radangl;
             y = (y - Z.radangl) * (Z.radangl - r) / dist + Z.radangl;
-            change_for_board(helpsit); 
+            change_for_board(helpsit);
         }
     }
 
@@ -395,6 +413,7 @@ namespace coins_hockey
         private user[] us;
         private const int shopfull = 1000;
         private int shop_pick, shop_palyer, shop_cursor;
+        private int pause_cursor;
 
         private long shopwidthanim = shopfull;
         private bool shopold = false;
@@ -402,19 +421,39 @@ namespace coins_hockey
         private Stopwatch shoptim = new Stopwatch();
         private int shop_speed = 2;
         private bool shop_animon = false;
-        
+        private int mem_sit;
+        private string write_replay = "replay";
+        private string real_write_repay;
+
         public game()
         {
             shop_palyer = shop_pick = shop_cursor = 1;
             us = new user[2];
             us[0] = new user();
             us[1] = new user();
-            now_palyer = ch1 = ch2 = sit = 0;
+            now_palyer = ch1 = ch2 = 0;
             money_pick = -1;
             gool1 = gool2 = false;
             new_game();
             power_kick = new Point();
             sit = 1;
+            try
+            {
+                var file = File.OpenText("./data.txt");
+                write_replay = file.ReadLine();
+                file.Close();
+            }
+            catch
+            {
+                write_replay = "replay";
+                try
+                {
+                    var fl = File.CreateText("./data.txt");
+                    fl.WriteLine("replay");
+                }
+                catch
+                { }
+            }
         }
         public void new_game(bool f = true)
         {
@@ -433,8 +472,10 @@ namespace coins_hockey
             if (f) ch2 = 0;
             immunlast = 5;
         }
-        public void up_date(long tick)
+        public void update(long tick)
         {
+            if (sit == 3)
+                return;
             double hl = tick;
             while (hl > 0)
             {
@@ -455,7 +496,7 @@ namespace coins_hockey
             {
                 rec.timerec += rec.rectim.ElapsedMilliseconds;
                 rec.rectim.Restart();
-                rec.timerec = Program.replay_add(rec.timerec, us, coinarr);
+                rec.timerec = Program.replay_add(rec.timerec, us, coinarr, real_write_repay);
             }
 
             for (int i = coinarr.Length - 3; i < coinarr.Length; i++)
@@ -509,15 +550,15 @@ namespace coins_hockey
             }
             else
                 if (ch2 >= 2)
-                {
-                    var k1 = (2 * us[0].sen_arm() + us[1].sen_arm()) / 3;
-                    var k2 = (2 * us[1].sen_arm() + us[0].sen_arm()) / 3;
-                    us[1].mon += (int)(Z.koofa + Z.koofb * Math.Sqrt(k2));
-                    if (ch1 > 0)
-                        us[0].mon += (int)((Z.koofa + Z.koofb * Math.Sqrt(k1)) * 2 / 3);
-                    sit = 1;
-                    shop_palyer = 1;
-                }
+            {
+                var k1 = (2 * us[0].sen_arm() + us[1].sen_arm()) / 3;
+                var k2 = (2 * us[1].sen_arm() + us[0].sen_arm()) / 3;
+                us[1].mon += (int)(Z.koofa + Z.koofb * Math.Sqrt(k2));
+                if (ch1 > 0)
+                    us[0].mon += (int)((Z.koofa + Z.koofb * Math.Sqrt(k1)) * 2 / 3);
+                sit = 1;
+                shop_palyer = 1;
+            }
         }
         public void menu_update()
         {
@@ -552,7 +593,7 @@ namespace coins_hockey
             g.DrawLine(new Pen(Color.Maroon), 0, 0, 0, Z.clheight);
             g.DrawLine(new Pen(Color.Maroon), Z.clwidth - 1, 0, Z.clwidth - 1, Z.clheight - 1);
             g.DrawLine(new Pen(Color.Maroon), 0, Z.clheight - 1, Z.clwidth - 1, Z.clheight - 1);
-            
+
             g.FillRectangle(System.Drawing.Brushes.Maroon, 0, 0, Z.radangl, Z.radangl);
             g.FillEllipse(System.Drawing.Brushes.White, 1, 0, Z.radangl * 2, Z.radangl * 2);
             g.FillRectangle(System.Drawing.Brushes.Maroon, Z.clwidth - Z.radangl, 0, Z.radangl, Z.radangl);
@@ -564,7 +605,7 @@ namespace coins_hockey
 
             g.FillRectangle(System.Drawing.Brushes.Red, 0, 532 / 2 - 50, 3, 100);
             g.FillRectangle(System.Drawing.Brushes.Red, 789, 532 / 2 - 50, 3, 100);
-            
+
             for (int i = 0; i < 11; i++)
             {
                 if (i == 0 || i == 4)
@@ -590,17 +631,21 @@ namespace coins_hockey
             g.DrawString(ch1.ToString() + " : " + ch2.ToString(), f, System.Drawing.Brushes.Black, 793 / 2 - 40, 5);
             var fn = new System.Drawing.Font("Arial", 10);
             int yk = 0;
-            if (rec.record) 
-                g.DrawString("rec", fn, Brushes.Black, 60, 5 + (yk++) * 10);
-            if (immunlast > 1) 
-                g.DrawString("immun " + (immunlast - 1).ToString(), fn, Brushes.Black, 60, 5 + (yk++) * 10);
+            if (rec.record)
+                g.DrawString("rec to " + real_write_repay, fn, Brushes.Black, 60, 5 + (yk++) * 13);
+            if (immunlast > 1)
+                g.DrawString("immun " + (immunlast - 1).ToString(), fn, Brushes.Black, 60, 5 + (yk++) * 13);
             border(g);
         }
         public void graphic_shop(System.Drawing.Graphics g)
         {
             g.Clear(Color.Maroon);
             var fn = new System.Drawing.Font("Courier", 15);
-            g.FillRectangle(Brushes.Red, 5, shop_pick * 20 - 7, 130, 20);
+            int y_coin = shop_pick * 20 - 7;
+            g.DrawLine(Pens.White, 145, 0, 145, y_coin - 2);
+            g.DrawLine(Pens.White, 145, Z.MainForm.ClientSize.Height, 145, y_coin + 22);
+            g.DrawLine(Pens.White, 135, y_coin - 2, 145, y_coin - 2);
+            g.DrawLine(Pens.White, 135, y_coin + 22, 145, y_coin + 22);
             for (int i = 1; i < Program.countcoin; i++)
             {
                 g.DrawString(Z.tcoin[i].name, fn, System.Drawing.Brushes.Bisque, 10, i * 20 - 10);
@@ -652,6 +697,39 @@ namespace coins_hockey
             }
             border(g);
         }
+        public void graphic_pause(System.Drawing.Graphics g)
+        {
+            g.Clear(Color.Maroon);
+            var fn = new System.Drawing.Font("Courier", 30);
+            Brush br = Brushes.Bisque;
+            if (pause_cursor == 1)
+                br = Brushes.White;
+            g.DrawString("Загрузить игру", fn, br, 260, 50);
+            br = Brushes.Bisque;
+            if (pause_cursor == 2)
+                br = Brushes.White;
+            if (!Z.use_internet)
+                br = Brushes.Gray;
+            g.DrawString("Сохранить игру", fn, br, 250, 120);
+            br = Brushes.Bisque;
+            if (pause_cursor == 3)
+                br = Brushes.White;
+            if (rec.record)
+            {
+                g.DrawString("Остановить запись", fn, br, 220, 190);
+                br = Brushes.Bisque;
+                if (pause_cursor == 4)
+                    br = Brushes.White;
+                g.DrawString("Удалить запись", fn, br, 253, 260);
+            }
+            else
+                g.DrawString("Начать запись", fn, br, 260, 190);
+            fn = new System.Drawing.Font("Courier", 20);
+            g.DrawString("Введите имя файла, куда сохранится следующий ваш replay", fn, Brushes.White, 10, 375);
+            g.FillRectangle(Brushes.White, 200, 440, 420, 50);
+            g.DrawString(write_replay, fn, Brushes.Black, 210, 445);
+            border(g);
+        }
         public void border(System.Drawing.Graphics g)
         {
             if (Z.mininmon)
@@ -667,6 +745,8 @@ namespace coins_hockey
         }
         public void save_game()
         {
+            if (!Z.use_internet)
+                return;
             try
             {
                 var oup = System.IO.File.CreateText("save.txt");
@@ -695,7 +775,8 @@ namespace coins_hockey
                 sit = sr[0];
                 ch1 = sr[1];
                 ch2 = sr[2];
-                if (sit > 0) shop_palyer = sit;
+                if (sit > 0)
+                    shop_palyer = sit;
                 new_game(false);
             }
             catch
@@ -703,56 +784,102 @@ namespace coins_hockey
         }
         public void start_record()
         {
+            if (write_replay == "")
+                write_replay = "replay";
             try
             {
                 rec.record = !rec.record;
                 if (rec.record)
-                    rec.oup = System.IO.File.CreateText("replay.chrpl");
-                else
-                    rec.oup.Close();
+                {
+                    string filename = write_replay + ".chrpl";
+                    var files = Directory.GetFiles(".\\").Select(s => s.ToLower());
+                    int i = 0;
+                    while (files.Contains(".\\" + filename))
+                    {
+                        ++i;
+                        filename = write_replay + i + ".chrpl";
+                    }
+                    real_write_repay = filename;
+                    rec.oup = System.IO.File.CreateText(filename);
+                }
             }
             catch
             { }
         }
-        public void Pause()
+        public void stop_record(bool delete)
         {
-
-        }
-        public void Run()
-        {
-
+            if (rec.record)
+            {
+                rec.oup.Close();
+                rec.record = false;
+                if (delete)
+                    File.Delete(real_write_repay);
+            }
         }
         public void klik(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+            {
+                if (sit == 3)
+                {
+                    if (write_replay == "")
+                        write_replay = "replay";
+                    sit = mem_sit;
+                }
+                else
+                {
+                    mem_sit = sit;
+                    sit = 3;
+                }
+            }
             if (sit == 1 || sit == 2)
             {
-                if (e.KeyCode == System.Windows.Forms.Keys.S && !e.Control)
+                if (e.KeyCode == Keys.S && !e.Control)
                 {
                     shop_pick = (shop_pick + 1) % Program.countcoin;
-                    if (shop_pick == 0) 
+                    if (shop_pick == 0)
                         shop_pick++;
                 }
-                if (e.KeyCode == System.Windows.Forms.Keys.W)
+                if (e.KeyCode == Keys.W)
                 {
                     shop_pick = (shop_pick + Program.countcoin - 1) % Program.countcoin;
                     if (shop_pick == 0) shop_pick--;
                     shop_pick = (shop_pick + Program.countcoin) % Program.countcoin;
                 }
-                if (e.KeyCode == System.Windows.Forms.Keys.Enter)
+                if (e.KeyCode == Keys.Enter)
                     buy_coin();
-                if (e.KeyCode == System.Windows.Forms.Keys.A)
+                if (e.KeyCode == Keys.A)
                     set_atac();
-                if (e.KeyCode == System.Windows.Forms.Keys.D)
+                if (e.KeyCode == Keys.D)
                     set_def();
-                if (e.KeyCode == System.Windows.Forms.Keys.N)
+                if (e.KeyCode == Keys.N)
                     next_magaz();
             }
-            if (e.KeyCode == System.Windows.Forms.Keys.S && e.Control)
+            if (sit == 3)
+            {
+                int code = (int)e.KeyCode;
+                if (code >= (int)Keys.A && code <= (int)System.Windows.Forms.Keys.Z && write_replay.Length <= 10)
+                {
+                    char c = (char)(code - Keys.A + 'a');
+                    write_replay += c;
+                }
+                if (code == (int)Keys.Back && write_replay.Length > 0)
+                    write_replay = write_replay.Substring(0, write_replay.Length - 1);
+                return;
+            }
+            if (e.KeyCode == Keys.S && e.Control)
                 save_game();
-            if (e.KeyCode == System.Windows.Forms.Keys.R && e.Control)
+            if (e.KeyCode == Keys.R && e.Control)
                 read_game();
-            if (e.KeyCode == System.Windows.Forms.Keys.R && !e.Control)
-                start_record();
+            if (e.KeyCode == Keys.R && !e.Control)
+            {
+                if (!rec.record)
+                    start_record();
+                else
+                    stop_record(false);
+            }
+            if (e.KeyCode == Keys.M)
+                stop_record(true);
         }
         public bool coin_stop()
         {
@@ -796,6 +923,7 @@ namespace coins_hockey
                         money_pick = i;
                     }
                 }
+                return;
             }
             if (sit == 1 || sit == 2)
             {
@@ -816,6 +944,20 @@ namespace coins_hockey
                     set_def();
                 if (e.Y > 400 && e.Y < 450 && e.X > 600)
                     next_magaz();
+                return;
+            }
+            if (sit == 3)
+            {
+                if (pause_cursor == 1)
+                    read_game();
+                if (pause_cursor == 2)
+                    save_game();
+                if (rec.record && pause_cursor == 3)
+                    stop_record(false);
+                else if (pause_cursor == 3)
+                    start_record();
+                else if (pause_cursor == 4)
+                    stop_record(true);
             }
         }
         public void mmklik(object sender, MouseEventArgs e)
@@ -846,11 +988,29 @@ namespace coins_hockey
             }
             if (sit == 0)
             {
-                if (e.Button != System.Windows.Forms.MouseButtons.None && money_pick != -1)
+                if (e.Button != MouseButtons.None && money_pick != -1)
                 {
                     power_kick.x = -coinarr[money_pick].x + e.X;
                     power_kick.y = -coinarr[money_pick].y + e.Y;
                 }
+            }
+            if (sit == 3)
+            {
+                if (e.X >= 200 && e.X <= Z.clwidth - 200)
+                {
+                    if (e.Y >= 45 && e.Y < 115)
+                        pause_cursor = 1;
+                    if (e.Y >= 115 && e.Y < 185)
+                        pause_cursor = 2;
+                    if (e.Y >= 185 && e.Y < 255)
+                        pause_cursor = 3;
+                    if (rec.record && e.Y >= 225 && e.Y < 295)
+                        pause_cursor = 4;
+                    if (e.Y < 45 || e.Y >= 295)
+                        pause_cursor = -1;
+                }
+                else
+                    pause_cursor = -1;
             }
         }
         public void muklik(object sender, MouseEventArgs e)
@@ -926,7 +1086,22 @@ namespace coins_hockey
                 sit = 0;
                 new_game();
             }
-        }   
+        }
+        public void close()
+        {
+            if (rec.record)
+                stop_record(false);
+            if (write_replay != " ")
+            {
+                try
+                {
+                    var fl = File.CreateText("./data.txt");
+                    fl.WriteLine(write_replay);
+                    fl.Close();
+                }
+                catch { }
+            }
+        }
     }
 
     class user
@@ -940,7 +1115,7 @@ namespace coins_hockey
             coin = new int[Program.countcoin];
             atac = 1;
             defince = 1;
-            mon = 1000000;
+            mon = 0;
         }
         public override string ToString()
         {

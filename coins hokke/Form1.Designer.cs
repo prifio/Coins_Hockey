@@ -66,13 +66,14 @@
             var g = System.Drawing.Graphics.FromImage(bmp);
             if (Z.sit == -2)
                 Program.graphic_nointernet(g);
-            else  if (Z.sit == -1)
+            else if (Z.sit == -1)
                 Program.graphic_wait(g);
             else if (Program.MainGame.sit == 0)
                 Program.MainGame.graphic_play(g);
+            else if (Program.MainGame.sit == 1 || Program.MainGame.sit == 2)
+                Program.MainGame.graphic_shop(g);
             else
-                if (Program.MainGame.sit > 0)
-                    Program.MainGame.graphic_shop(g);
+                Program.MainGame.graphic_pause(g);
             e.Graphics.DrawImage(bmp, 0, 0);
         }
 
