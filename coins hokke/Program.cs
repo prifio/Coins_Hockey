@@ -726,7 +726,7 @@ namespace coins_hockey
                 g.DrawString("Начать запись", fn, br, 260, 190);
             fn = new System.Drawing.Font("Courier", 20);
             g.DrawString("Введите имя файла, куда сохранится следующий ваш replay", fn, Brushes.White, 10, 375);
-            g.FillRectangle(Brushes.White, 200, 440, 420, 50);
+            g.FillRectangle(Brushes.White, 190, 440, 420, 50);
             g.DrawString(write_replay, fn, Brushes.Black, 210, 445);
             border(g);
         }
