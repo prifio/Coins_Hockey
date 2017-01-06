@@ -603,8 +603,12 @@ namespace coins_hockey
             g.FillRectangle(System.Drawing.Brushes.Maroon, Z.clwidth - Z.radangl, Z.clheight - Z.radangl, Z.radangl, Z.radangl);
             g.FillEllipse(System.Drawing.Brushes.White, Z.clwidth - 2 * Z.radangl - 1, Z.clheight - 2 * Z.radangl - 1, Z.radangl * 2, Z.radangl * 2);
 
-            g.FillRectangle(System.Drawing.Brushes.Red, 0, 532 / 2 - 50, 3, 100);
-            g.FillRectangle(System.Drawing.Brushes.Red, 789, 532 / 2 - 50, 3, 100);
+
+            Brush gate_color = Brushes.Red;
+            if (immunlast > 1 || immunlast == 1 && !coin_stop())
+                gate_color = Brushes.Blue;
+            g.FillRectangle(gate_color, 0, 532 / 2 - 50, 3, 100);
+            g.FillRectangle(gate_color, 789, 532 / 2 - 50, 3, 100);
 
             for (int i = 0; i < 11; i++)
             {
@@ -633,8 +637,11 @@ namespace coins_hockey
             int yk = 0;
             if (rec.record)
                 g.DrawString("rec to " + real_write_repay, fn, Brushes.Black, 60, 5 + (yk++) * 13);
-            if (immunlast > 1)
-                g.DrawString("immun " + (immunlast - 1).ToString(), fn, Brushes.Black, 60, 5 + (yk++) * 13);
+            int cnt_immun = immunlast;
+            if (!coin_stop())
+                ++cnt_immun;
+            if (cnt_immun > 1)
+                g.DrawString("immun " + (cnt_immun - 1).ToString(), fn, Brushes.Black, 60, 5 + (yk++) * 13);
             border(g);
         }
         public void graphic_shop(System.Drawing.Graphics g)
