@@ -759,7 +759,7 @@ namespace coins_hockey
                 var oup = System.IO.File.CreateText("save.txt");
                 oup.WriteLine(us[0].ToString());
                 oup.WriteLine(us[1].ToString());
-                oup.WriteLine(sit + " " + ch1 + " " + ch2);
+                oup.WriteLine(mem_sit + " " + ch1 + " " + ch2);
                 oup.Close();
                 Spinet.Spinet.SpiFile("save.txt");
             }
