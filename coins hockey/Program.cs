@@ -2,14 +2,11 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Drawing;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Newtonsoft.Json;
 using System.Net;
 using System.IO;
-using System.Net.NetworkInformation;
-using Spinet;
 
 namespace coins_hockey
 {
@@ -26,7 +23,7 @@ namespace coins_hockey
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            System.Threading.Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             Z.MainForm = new Form1();
             Z.sit = -1;
             Z.MainForm.Show();
@@ -36,9 +33,9 @@ namespace coins_hockey
             if (Z.sit == -2)
             {
                 Z.use_internet = false;
-                Z.eur = 65;
-                Z.gbp = 75;
-                Z.usd = 60;
+                Z.eur = 85;
+                Z.gbp = 100;
+                Z.usd = 70;
                 apply_rate();
             }
             else
@@ -61,30 +58,25 @@ namespace coins_hockey
         }
         public static void set_rate()
         {
-            try
-            {
-                Ping ping = new Ping();
-                PingReply reply = ping.Send("ya.ru");
-                Z.sit = -1;
-            }
-            catch
-            {
-                Z.sit = -2;
-            }
-            if (Z.sit != -2)
-            {
-                WebRequest wrGETURL;
-                wrGETURL = WebRequest.Create("https://query.yahooapis.com/v1/public/yql?q=select+*+from+yahoo.finance.xchange+where+pair+=+%22USDRUB,EURRUB,GBPRUB,CADRUB%22&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=");
-                var objStream = wrGETURL.GetResponse().GetResponseStream();
-                var objReader = new StreamReader(objStream);
-                string json = objReader.ReadLine();
-                var prprp = new { query = new { results = new { rate = new valut[3] } } };
-                prprp = JsonConvert.DeserializeAnonymousType(json, prprp);
-                Z.usd = double.Parse(prprp.query.results.rate[0].Rate);
-                Z.eur = double.Parse(prprp.query.results.rate[1].Rate);
-                Z.gbp = double.Parse(prprp.query.results.rate[2].Rate);
-                apply_rate();
-            }
+			try
+			{
+				WebRequest wrGETURL;
+				wrGETURL = WebRequest.Create("https://query1.finance.yahoo.com/v7/finance/quote?&symbols=USDRUB%3DX,EURRUB%3DX,GBPRUB%3DX&fields=regularMarketPrice");
+				var objStream = wrGETURL.GetResponse().GetResponseStream();
+				var objReader = new StreamReader(objStream);
+				string json = objReader.ReadLine();
+				var prprp = new { quoteResponse = new { result = new valut[3] } };
+				prprp = JsonConvert.DeserializeAnonymousType(json, prprp);
+				Z.usd = prprp.quoteResponse.result[0].regularMarketPrice;
+				Z.eur = prprp.quoteResponse.result[1].regularMarketPrice;
+				Z.gbp = prprp.quoteResponse.result[2].regularMarketPrice;
+				apply_rate();
+				Z.sit = -1;
+			}
+			catch
+			{
+				Z.sit = -2;
+			}
         }
         public static void apply_rate()
         {
@@ -715,8 +707,8 @@ namespace coins_hockey
             br = Brushes.Bisque;
             if (pause_cursor == 2)
                 br = Brushes.White;
-            if (!Z.use_internet)
-                br = Brushes.Gray;
+            //if (!Z.use_internet)
+            //    br = Brushes.Gray;
             g.DrawString("Сохранить игру", fn, br, 250, 120);
             br = Brushes.Bisque;
             if (pause_cursor == 3)
@@ -752,8 +744,8 @@ namespace coins_hockey
         }
         public void save_game()
         {
-            if (!Z.use_internet)
-                return;
+            //if (!Z.use_internet)
+            //    return;
             try
             {
                 var oup = System.IO.File.CreateText("save.txt");

@@ -60,7 +60,7 @@ namespace coins_hockey
 
     class valut//class for JSON desurs
     {
-        public string Rate;
+        public double regularMarketPrice;
     }
     
 }
